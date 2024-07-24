@@ -5,7 +5,7 @@ import { IRegisterUser } from "@/types/IRegisterUser";
 
 export const createUser = async (data: IRegisterUser) => {
     const userModel = AppDataSource.getRepository(Users)
-    const newUser = userModel.save(data)
+    const newUser = await userModel.save(data)
 
     return newUser
 }
