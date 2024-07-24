@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: financialv2
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DB}
+    networks:
+      - api-network
+    restart: 'always'
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+    volumes:
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+
+  api:
+    image: financial-api-v2:1.1
+    container_name: financial-api
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DB}
+    ports:
+      - "3003:3003"
+    networks:
+      - api-network
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src # Mapeie o diretório local src para o diretório src no contêiner
+      - /app/node_modules # Isso evita que o volume sobrescreva os node_modules instalados no contêiner
+
+networks:
+  api-network:
+    driver: bridge
