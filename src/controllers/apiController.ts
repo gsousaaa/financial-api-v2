@@ -5,6 +5,7 @@ import { HttpStatus } from "@/utils/HttpsStatus";
 import { NextFunction, Request, Response } from "express";
 import { iPayloadCreateMovementSchema } from "./schemas/createMovementSchema";
 import { findMovementsService } from "@/services/findMovementsService";
+import { findBalanceService } from "@/services/findBalanceService";
 
 export const apiController = {
     createMovementController: async (req: RequestToken, res: Response, next: NextFunction) => {
@@ -32,7 +33,19 @@ export const apiController = {
         } catch (err) {
             next(err)
         }
+    },
+
+    getBalanceController: async (req: RequestToken, res: Response, next: NextFunction) => {
+        try { 
+            const userId = req.user?.id
+
+            const balance = await findBalanceService(userId as number)
+
+            return res.status(HttpStatus.OK).json({balance})
+
+        } catch (err) { 
+
+        }
     }
 }
-
 
