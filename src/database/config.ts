@@ -1,5 +1,7 @@
 import { DataSource } from "typeorm";
 import dotenv from 'dotenv'
+import { Movements } from "@/models/Movements";
+import { Users } from "@/models/Users";
 
 dotenv.config()
 
@@ -36,13 +38,13 @@ const dbConfig = config[env as keyof typeof config];
 export const AppDataSource = new DataSource({
     type: "mysql",
     host: dbConfig.host,
-    port: 3307,
+    port: parseInt(process.env.MYSQL_PORT as string),
     username: dbConfig.username,
     password: dbConfig.password,
     database: dbConfig.database,
     synchronize: true,
     logging: false,
-    entities: ['src/models/entities/*.ts', 'build/models/entities/*.js'],
+    entities: [Movements, Users],
     subscribers: [],
     migrations: [],
 });
