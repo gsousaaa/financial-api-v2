@@ -21,7 +21,7 @@ services:
       start_period: 10s
       timeout: 5s
     volumes:
-      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql # Executa o script SQL ao iniciar o banco de dados
 
   api:
     image: financial-api-v2:1.1
@@ -37,8 +37,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./src:/app/src # Mapeie o diretório local src para o diretório src no contêiner
-      - /app/node_modules # Isso evita que o volume sobrescreva os node_modules instalados no contêiner
+      - ./src:/app/src # Mapeia o diretório local src para o diretório src no container
+      - /app/node_modules # Isso evita que o volume sobrescreva os node_modules instalados no container
 
 networks:
   api-network:
