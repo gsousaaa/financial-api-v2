@@ -6,6 +6,7 @@ import { NextFunction, Request, Response } from "express";
 import { iPayloadCreateMovementSchema } from "./schemas/createMovementSchema";
 import { findMovementsService } from "@/services/findMovementsService";
 import { findBalanceService } from "@/services/findBalanceService";
+import { deleteMovementService } from "@/services/deleteMovementService";
 
 export const apiController = {
     createMovementController: async (req: RequestToken, res: Response, next: NextFunction) => {
@@ -36,15 +37,31 @@ export const apiController = {
     },
 
     getBalanceController: async (req: RequestToken, res: Response, next: NextFunction) => {
-        try { 
+        try {
             const userId = req.user?.id
 
             const balance = await findBalanceService(userId as number)
 
-            return res.status(HttpStatus.OK).json({balance})
+            return res.status(HttpStatus.OK).json({ balance })
 
-        } catch (err) { 
+        } catch (err) {
+            next(err)
+        }
+    },
 
+
+    deleteMovementController: async (req: RequestToken, res: Response, next: NextFunction) => {
+        try {
+            const id: number = req.body
+
+            const userId = req.user?.id
+
+            await deleteMovementService(id, userId as number)
+
+            return res.status(HttpStatus.OK).json({ message: 'Movimentação deletada com sucesso!' })
+
+        } catch (err) {
+            next(err)
         }
     }
 }
