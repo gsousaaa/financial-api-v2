@@ -1,5 +1,5 @@
 import { AppDataSource } from "@/database/config"
-import { Movements } from "@/models/entities/Movements"
+import { Movements } from "@/models/Movements"
 
 
 export const deleteMovement = async(id: number, userId: number) => {

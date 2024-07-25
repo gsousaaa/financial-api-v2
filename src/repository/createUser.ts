@@ -1,6 +1,6 @@
 
 import { AppDataSource } from "@/database/config";
-import { Users } from "@/models/entities/Users";
+import { Users } from "@/models/Users";
 import { IRegisterUser } from "@/types/IRegisterUser";
 
 export const createUser = async (data: IRegisterUser) => {

@@ -24,4 +24,4 @@ COPY --from=build /app/build ./build
 
 EXPOSE 3003
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start" ]

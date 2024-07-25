@@ -4,7 +4,6 @@ import { AppDataSource } from './database/config'
 import errorMiddleware from './middlewares/errorMiddleware'
 import { authRouter } from './routes/authRoutes'
 import { apiRouter } from './routes/apiRoutes'
-import { findBalanceService } from './services/findBalanceService'
 
 dotenv.config()
 
@@ -25,9 +24,9 @@ app.listen(3003, async () => {
             // here you can start to work with your database
             console.log("DB working!");
 
-            // console.log(data.getRepository(Users).find());
         })
         .catch((error) => console.log("Error: ", error))
+
     }
 )
 

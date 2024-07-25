@@ -24,12 +24,15 @@ services:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql # Executa o script SQL ao iniciar o banco de dados
 
   api:
-    image: financial-api-v2:1.1
+    image: financial-api-v2:1.2
     container_name: financial-api
     environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_PORT: ${MYSQL_PORT_DOCKER}
+      MYSQL_HOST: ${MYSQL_HOST_DOCKER}
     ports:
       - "3003:3003"
     networks:
