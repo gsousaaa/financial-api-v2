@@ -20,6 +20,7 @@ COPY package.json .env ./
 
 RUN npm install --prod
 
+# Copia os arquivos da imagem criada na  primeira etapa para /app/build da imagem final
 COPY --from=build /app/build ./build
 
 EXPOSE 3003

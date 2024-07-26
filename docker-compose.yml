@@ -15,13 +15,35 @@ services:
       - api-network
     restart: 'always'
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
       interval: 10s
       retries: 5
       start_period: 10s
       timeout: 5s
     volumes:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql # Executa o script SQL ao iniciar o banco de dados
+
+  db_test:
+    image: mysql:5.7
+    container_name: financialv2_test
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD_TEST}
+      MYSQL_USER: ${MYSQL_USER_TEST}
+      MYSQL_DATABASE: ${MYSQL_DB_TEST}
+    networks:
+      - api-network
+    restart: 'always'
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+    volumes:
+      - ./script-test.sql:/docker-entrypoint-initdb.d/script-test.sql
 
   api:
     image: financial-api-v2:1.2
