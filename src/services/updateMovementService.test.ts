@@ -2,6 +2,7 @@ import { AppDataSource } from "@/database/config"
 import { createMovement } from "@/repository/createMovement"
 import { updateMovementService } from "./updateMovementService"
 import { Movements } from "@/models/Movements"
+import BadRequest from "@/errors/BadRequest"
 
 describe('update movement service', () => {
     beforeAll(async () => {
@@ -40,6 +41,15 @@ describe('update movement service', () => {
         expect(updatedMovement.value).toBe(500)
         expect(updatedMovement.description).toBe('update movement delete')
         expect(updatedMovement.movementType).toBe('expense')
+    })
+
+
+    it('update movement fail', async() => {
+        try {
+            await updateMovementService({id: 445}, 445)
+        } catch(err) {
+            expect(err).toBeInstanceOf(BadRequest)
+        }
     })
 })
 
