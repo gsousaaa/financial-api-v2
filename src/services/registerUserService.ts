@@ -1,6 +1,6 @@
 import BadRequest from "@/errors/BadRequest"
 import { createUser } from "@/repository/createUser"
-import { findUser } from "@/repository/findUserByEmail"
+import { findUser } from "@/repository/findUser"
 import { IRegisterUser } from "@/types/IRegisterUser"
 import { hashPassword } from "@/utils/hashPassword"
 import { tokenManager } from "@/utils/TokenManager"

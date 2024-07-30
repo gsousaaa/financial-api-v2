@@ -1,7 +1,7 @@
 import BadRequest from "@/errors/BadRequest"
 import { deleteMovement } from "@/repository/deleteMovement"
 import { findMovementById } from "@/repository/findMovementById"
-import { findUser } from "@/repository/findUserByEmail"
+import { findUser } from "@/repository/findUser"
 import { updateUserBalance } from "@/repository/updateUserBalance"
 
 export const deleteMovementService = async (id: number, userId: number) => {

@@ -1,5 +1,5 @@
 import BadRequest from "@/errors/BadRequest"
-import { findUser } from "@/repository/findUserByEmail"
+import { findUser } from "@/repository/findUser"
 import { ILoginUser } from "@/types/ILoginUser"
 import { comparePassword } from "@/utils/comparePassword"
 import { tokenManager } from "@/utils/TokenManager"

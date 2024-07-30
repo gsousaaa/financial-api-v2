@@ -1,6 +1,6 @@
 import BadRequest from "@/errors/BadRequest"
 import { createMovement } from "@/repository/createMovement"
-import { findUser } from "@/repository/findUserByEmail"
+import { findUser } from "@/repository/findUser"
 import { updateUserBalance } from "@/repository/updateUserBalance"
 import { ICreateMovement } from "@/types/ICreateMovement"
 

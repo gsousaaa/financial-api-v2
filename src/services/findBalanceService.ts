@@ -1,6 +1,6 @@
 import BadRequest from "@/errors/BadRequest"
 import { findMovements } from "@/repository/findMovements"
-import { findUser } from "@/repository/findUserByEmail"
+import { findUser } from "@/repository/findUser"
 
 export const findBalanceService = async (id: number) => {
     const movements = await findMovements(id)
