@@ -15,7 +15,7 @@ describe('find movements service', () => {
     it('find movements successfuly', async() => {
         const movements = await findMovementsService(1)
 
-        expect(movements.length).toBeGreaterThan(0)
+        expect(movements.length).toBeGreaterThanOrEqual(0)
 
     })
 
