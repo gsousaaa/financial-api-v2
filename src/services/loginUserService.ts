@@ -15,7 +15,12 @@ export const loginUserService = async (credentials: ILoginUser) => {
 
     const token = tokenManager.createToken({info: {id: hasUser.id, name: hasUser.name as string, email: hasUser.email, balance: hasUser.balance as number}}, '6h')
 
-    return token
+    return {
+        email: hasUser.email,
+        username: hasUser.name,
+        balance: hasUser.balance,
+        token
+    }
 
 }
 

@@ -43,9 +43,9 @@ export const apiController = {
         try {
             const userId = req.user?.id
 
-            const balance = await findBalanceService(userId as number)
+            const finances = await findBalanceService(userId as number)
 
-            return res.status(HttpStatus.OK).json({ balance })
+            return res.status(HttpStatus.OK).json({ finances })
 
         } catch (err) {
             next(err)

@@ -7,8 +7,6 @@ import { ILoginUser } from "@/types/ILoginUser";
 import { loginUserSchema } from "./schemas/loginUserSchema";
 import { loginUserService } from "@/services/loginUserService";
 
-
-
 export const authController = {
     registerUser: async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -29,9 +27,9 @@ export const authController = {
 
             loginUserSchema.parse(credentials)
 
-            const token = await loginUserService(credentials)
+            const userInfo = await loginUserService(credentials)
 
-            return res.status(HttpStatus.OK).json({ token })
+            return res.status(HttpStatus.OK).json(userInfo)
 
         } catch (err) {
             next(err)
