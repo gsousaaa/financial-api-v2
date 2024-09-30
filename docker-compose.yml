@@ -76,8 +76,6 @@ services:
     volumes:
       - ./src:/app/src            # Mapeia o diretório local src para o diretório src no container
       - /app/node_modules          # Isso evita que o volume sobrescreva os node_modules instalados no container
-    command: ["pm2-runtime", "start", "build/app.js", "--name", "financial-api"] # Inicia a aplicação com PM2
-
 networks:
   api-network:
     driver: bridge
