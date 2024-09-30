@@ -10,6 +10,8 @@ import { deleteMovementService } from "@/services/deleteMovementService";
 import { IUpdateMovement } from "@/types/IUpdateMovement";
 import { updateMovementSchema } from "./schemas/updateMovementSchema";
 import { updateMovementService } from "@/services/updateMovementService";
+import { forgotPasswordService } from "@/services/forgotPasswordService";
+import { forgotPasswordSchema } from "./schemas/forgotPasswordSchema";
 
 export const apiController = {
     createMovementController: async (req: RequestToken, res: Response, next: NextFunction) => {
@@ -20,7 +22,7 @@ export const apiController = {
 
             const newMovement = await createMovementService({ ...data, userId: req.user?.id as number })
 
-            return res.status(HttpStatus.CREATED).json({ newMovement })
+            return res.status(HttpStatus.CREATED).json(newMovement)
         } catch (err) {
             next(err)
         }
@@ -32,7 +34,7 @@ export const apiController = {
 
             const movements = await findMovementsService(userId as number)
 
-            return res.status(HttpStatus.OK).json({ movements })
+            return res.status(HttpStatus.OK).json(movements)
 
         } catch (err) {
             next(err)
@@ -55,7 +57,7 @@ export const apiController = {
 
     deleteMovementController: async (req: RequestToken, res: Response, next: NextFunction) => {
         try {
-            const id: number = req.body.id
+            const id: number = Number(req.params.id)
 
             const userId = req.user?.id
 
@@ -76,11 +78,13 @@ export const apiController = {
 
             const updatedMovement = await updateMovementService(data, userId as number)
 
-            return res.status(HttpStatus.OK).json({ updatedMovement })
+            return res.status(HttpStatus.OK).json(updatedMovement)
 
         } catch (err) {
             next(err)
         }
-    }
+    },
+
+
 }
 

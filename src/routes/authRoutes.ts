@@ -7,3 +7,6 @@ authRouter.post('/auth/register', authController.registerUser)
 
 authRouter.post('/auth/login', authController.loginUser)
 
+authRouter.post('/forgot-password', authController.forgotPasswordController)
+
+authRouter.post('/reset-password/:token', authController.resetPasswordController)
