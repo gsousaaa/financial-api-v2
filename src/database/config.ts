@@ -21,26 +21,26 @@ interface IConfig {
 
 const config: IConfig = {
     dev: {
-        username: process.env.MYSQL_USER!,
-        password: process.env.MYSQL_PASSWORD!,
-        database: process.env.MYSQL_DB!,
-        host: process.env.MYSQL_HOST!,
-        port: process.env.MYSQL_PORT!,
+        username: process.env.PG_USER!,
+        password: process.env.PG_PASSWORD!,
+        database: process.env.PG_DB!,
+        host: process.env.PG_HOST!,
+        port: process.env.PG_PORT!,
     },
 
     test: {
-        username: process.env.MYSQL_USER_TEST!,
-        password: process.env.MYSQL_PASSWORD_TEST!,
-        database: process.env.MYSQL_DB_TEST!,
-        host: process.env.MYSQL_HOST_TEST!,
-        port: process.env.MYSQL_PORT_TEST!,
+        username: process.env.PG_USER_TEST!,
+        password: process.env.PG_PASSWORD_TEST!,
+        database: process.env.PG_DB_TEST!,
+        host: process.env.PG_HOST_TEST!,
+        port: process.env.PG_PORT_TEST!,
     },
     prod: {
         username: process.env.DB_USER!,
         password: process.env.DB_USER_PASS!,
         database: process.env.DB_DATABASE!,
         host: process.env.DB_HOST!,
-        port: process.env.MYSQL_PORT!,
+        port: process.env.PG_PORT!,
     }
 }
 
@@ -48,13 +48,13 @@ const env = process.env.NODE_ENV;
 const dbConfig = config[env as keyof typeof config];
 
 export const AppDataSource = new DataSource({
-    type: "mysql",
+    type: "postgres",
     host: dbConfig.host,
     port: parseInt(dbConfig.port),
     username: dbConfig.username,
     password: dbConfig.password,
     database: dbConfig.database,
-    synchronize: true,
+    synchronize: false,
     logging: false,
     entities: [Movements, Users],
     subscribers: [],
