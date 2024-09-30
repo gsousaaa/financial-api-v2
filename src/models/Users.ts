@@ -7,33 +7,36 @@ import {
 } from "typeorm";
 import { Movements } from "./Movements";
 
-@Index("email", ["email"], { unique: true })
-@Entity("users", { schema: "financialv2" })
+@Index("users_email_key", ["email"], { unique: true })
+@Index("users_pkey", ["id"], { unique: true })
+@Entity("users", { schema: "public" })
 export class Users {
-  @PrimaryGeneratedColumn({ type: "int", name: "id" })
+  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
-  @Column("varchar", { name: "name", nullable: true, length: 100 })
+  @Column("character varying", { name: "name", nullable: true, length: 100 })
   name: string | null;
 
-  @Column("varchar", { name: "email", unique: true, length: 100 })
+  @Column("character varying", { name: "email", unique: true, length: 100 })
   email: string;
 
-  @Column("varchar", { name: "password", nullable: true, length: 100 })
+  @Column("character varying", {
+    name: "password",
+    nullable: true,
+    length: 100,
+  })
   password: string | null;
 
-  @Column("varchar", { name: "created_at", nullable: true, length: 24 })
-  createdAt: string | null;
-
-  @Column("float", {
-    name: "balance",
+  @Column("timestamp without time zone", {
+    name: "created_at",
     nullable: true,
-    precision: 12,
-    default: () => "'0'",
+    default: () => "CURRENT_TIMESTAMP",
   })
-  balance: number | null;
+  createdAt: Date | null;
+
+  @Column("numeric", { name: "balance", nullable: true, default: () => "0" })
+  balance: string | null;
 
   @OneToMany(() => Movements, (movements) => movements.user)
   movements: Movements[];
 }
-

@@ -2,47 +2,49 @@ version: '3'
 
 services:
   db:
-    image: mysql:5.7
-    container_name: financialv2
+    image: postgres:latest
+    container_name: postgres
     ports:
-      - "3307:3306"
+      - "5436:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_DATABASE: ${MYSQL_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
     networks:
       - api-network
     restart: 'always'
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}" ]
       interval: 10s
       retries: 5
       start_period: 10s
       timeout: 5s
     volumes:
-      - ./script.sql:/docker-entrypoint-initdb.d/script.sql # Executa o script SQL ao iniciar o banco de dados
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+      - db:/var/lib/postgresql/data
+
   db_test:
-    image: mysql:5.7
-    container_name: financialv2_test
+    image: postgres:latest
+    container_name: postgres_test
     ports:
-      - "3308:3306"
+      - "${PG_PORT_TEST}:5432" # Correção para usar a porta padrão do PostgreSQL
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD_TEST}
-      MYSQL_USER: ${MYSQL_USER_TEST}
-      MYSQL_DATABASE: ${MYSQL_DB_TEST}
+      POSTGRES_USER: ${PG_USER_TEST}
+      POSTGRES_PASSWORD: ${PG_PASSWORD_TEST}
+      POSTGRES_DB: ${PG_DB_TEST}
     networks:
       - api-network
     restart: 'always'
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${PG_USER_TEST} -d ${PG_DB_TEST}" ]
       interval: 10s
       retries: 5
       start_period: 10s
       timeout: 5s
     volumes:
       - ./script-test.sql:/docker-entrypoint-initdb.d/script-test.sql
+      - db_test:/var/lib/postgresql/data
+
   redis:
     image: redis:latest
     container_name: redis
@@ -57,11 +59,11 @@ services:
     container_name: financial-api
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_PORT: ${MYSQL_PORT_DOCKER}
-      MYSQL_HOST: ${MYSQL_HOST_DOCKER}
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_USER: ${PG_USER}
+      PG_DATABASE: ${PG_DB}
+      PG_PORT: 5432 # Usar a porta padrão do PostgreSQL
+      PG_HOST: db # Conectar ao serviço db diretamente
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
@@ -78,3 +80,7 @@ services:
 networks:
   api-network:
     driver: bridge
+
+volumes:
+  db:
+  db_test:
