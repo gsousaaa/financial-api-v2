@@ -27,7 +27,7 @@ services:
     image: postgres:latest
     container_name: postgres_test
     ports:
-      - "${PG_PORT_TEST}:5432" # Correção para usar a porta padrão do PostgreSQL
+      - "${PG_PORT_TEST}:5432"  # Correção para usar a porta padrão do PostgreSQL
     environment:
       POSTGRES_USER: ${PG_USER_TEST}
       POSTGRES_PASSWORD: ${PG_PASSWORD_TEST}
@@ -62,8 +62,8 @@ services:
       PG_PASSWORD: ${PG_PASSWORD}
       PG_USER: ${PG_USER}
       PG_DATABASE: ${PG_DB}
-      PG_PORT: ${PG_PORT_DOCKER} # Usar a porta padrão do PostgreSQL
-      PG_HOST: db # Conectar ao serviço db diretamente
+      PG_PORT: ${PG_PORT_DOCKER} 
+      PG_HOST: db                 
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
@@ -74,8 +74,9 @@ services:
       - db
       - redis
     volumes:
-      - ./src:/app/src # Mapeia o diretório local src para o diretório src no container
-      - /app/node_modules # Isso evita que o volume sobrescreva os node_modules instalados no container
+      - ./src:/app/src            # Mapeia o diretório local src para o diretório src no container
+      - /app/node_modules          # Isso evita que o volume sobrescreva os node_modules instalados no container
+    command: ["pm2-runtime", "start", "build/app.js", "--name", "financial-api"] # Inicia a aplicação com PM2
 
 networks:
   api-network:
