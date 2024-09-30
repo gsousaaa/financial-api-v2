@@ -33,4 +33,4 @@ COPY --from=build /app/build ./build
 
 EXPOSE 3003
 
-CMD ["pm2-runtime", "start", "src/app.js", "--name", "financial-api"]
+CMD ["npx", "pm2", "start", "build/app.js", "--name", "financial-api"]
