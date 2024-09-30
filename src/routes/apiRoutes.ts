@@ -10,7 +10,7 @@ apiRouter.get('/api/movements', auth, apiController.getMovementsController)
 
 apiRouter.get('/api/balance', auth, apiController.getBalanceController)
 
-apiRouter.delete('/api/movement', auth, apiController.deleteMovementController)
+apiRouter.delete('/api/movement/:id', auth, apiController.deleteMovementController)
 
 apiRouter.put('/api/movement', auth, apiController.updateMovementController)
 

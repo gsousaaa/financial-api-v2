@@ -4,7 +4,7 @@ import { findMovements } from "@/repository/findMovements"
 export const findMovementsService = async (userId: number) => {
     const movements = await findMovements(userId)
 
-    if (!movements || movements.length < 1) throw new BadRequest('Nenhuma movimentação foi encontrada!')
+    if (!movements) throw new BadRequest('Não foi possível buscar as movimentações!')
 
     return movements
 }

@@ -22,7 +22,6 @@ services:
       timeout: 5s
     volumes:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql # Executa o script SQL ao iniciar o banco de dados
-
   db_test:
     image: mysql:5.7
     container_name: financialv2_test
@@ -44,9 +43,17 @@ services:
       timeout: 5s
     volumes:
       - ./script-test.sql:/docker-entrypoint-initdb.d/script-test.sql
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - api-network
+    restart: 'always'
 
   api:
-    image: financial-api-v2:1.2
+    image: financial-api-v2:latest
     container_name: financial-api
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -55,12 +62,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DB}
       MYSQL_PORT: ${MYSQL_PORT_DOCKER}
       MYSQL_HOST: ${MYSQL_HOST_DOCKER}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "3003:3003"
     networks:
       - api-network
     depends_on:
       - db
+      - redis
     volumes:
       - ./src:/app/src # Mapeia o diretório local src para o diretório src no container
       - /app/node_modules # Isso evita que o volume sobrescreva os node_modules instalados no container
