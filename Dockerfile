@@ -22,7 +22,7 @@ WORKDIR /app
 COPY package.json ./
 
 # Instale o pnpm globalmente também aqui
-RUN npm install -g pnpm
+RUN npm install -g pnpm pm2
 
 RUN pnpm install --prod
 
