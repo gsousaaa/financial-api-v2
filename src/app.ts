@@ -4,11 +4,14 @@ import { AppDataSource } from './database/config'
 import errorMiddleware from './middlewares/errorMiddleware'
 import { authRouter } from './routes/authRoutes'
 import { apiRouter } from './routes/apiRoutes'
+import cors from 'cors'
+import { client } from './database/redis'
 
 dotenv.config()
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -27,6 +30,14 @@ app.listen(3003, async () => {
         })
         .catch((error) => console.log("Error: ", error))
 
+
+        client.connect().then(() => {
+            console.log('Redis conectado');
+          }).catch(err => {
+            console.error('Erro ao conectar ao Redis:', err);
+          });
+
+        client.flushAll()
     }
 )
 
