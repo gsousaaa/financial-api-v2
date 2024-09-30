@@ -5,11 +5,11 @@ WORKDIR /app
 
 COPY package.json tsconfig.json ./
 
-RUN npm install
+RUN pnpm install
 
 COPY src ./src
 
-RUN npm run build
+RUN pnpm run build
 
 # Etapa 2: Configuração da imagem final
 FROM node:22-alpine3.18
@@ -18,11 +18,11 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN npm install --prod
+RUN pnpm install --prod
 
 # Copia os arquivos da imagem criada na  primeira etapa para /app/build da imagem final
 COPY --from=build /app/build ./build
 
 EXPOSE 3003
 
-CMD [ "npm", "run", "start" ]
+CMD [ "pnpm", "run", "start" ]
