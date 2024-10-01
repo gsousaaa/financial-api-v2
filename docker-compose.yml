@@ -22,12 +22,11 @@ services:
     volumes:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql
       - db:/var/lib/postgresql/data
-
   db_test:
     image: postgres:latest
     container_name: postgres_test
     ports:
-      - "${PG_PORT_TEST}:5432"  # Correção para usar a porta padrão do PostgreSQL
+      - "${PG_PORT_TEST}:5432" # Correção para usar a porta padrão do PostgreSQL
     environment:
       POSTGRES_USER: ${PG_USER_TEST}
       POSTGRES_PASSWORD: ${PG_PASSWORD_TEST}
@@ -53,29 +52,6 @@ services:
     networks:
       - api-network
     restart: 'always'
-
-  api:
-    image: financial-api-v2:latest
-    container_name: financial-api
-    environment:
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      PG_PASSWORD: ${PG_PASSWORD}
-      PG_USER: ${PG_USER}
-      PG_DATABASE: ${PG_DB}
-      PG_PORT: ${PG_PORT_DOCKER} 
-      PG_HOST: db                 
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    ports:
-      - "3003:3003"
-    networks:
-      - api-network
-    depends_on:
-      - db
-      - redis
-    volumes:
-      - ./src:/app/src            # Mapeia o diretório local src para o diretório src no container
-      - /app/node_modules          # Isso evita que o volume sobrescreva os node_modules instalados no container
 networks:
   api-network:
     driver: bridge
