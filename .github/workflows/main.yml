@@ -1,0 +1,42 @@
+name: DEPLOY-API
+
+on:
+  push: 
+    branches: [main]
+jobs:
+  deploy-main:
+    runs-on: [self-hosted, Linux, x64, financial-api]
+    strategy: 
+      matrix:
+        node-version: [lts/*]
+    steps: 
+        - uses: actions/checkout@v3
+        - name: Use Node.js ${{ matrix.node-version }}
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node-version }}
+        - name: install pnpm
+          run: npm install -g pnpm
+
+        - name: install dependencies
+          run: pnpm install
+
+        - name: "Create env file"
+          run: echo '${{ secrets.ENV_FILE }}' > .env
+
+        - name: build application
+          run: pnpm run build
+
+        - name: install pm2
+          run: pnpm install pm2
+
+        - name: start server
+          run: pm2 startOrGracefulReload ecosystem.config.js
+
+        - name: pm2 save
+          run: pm2 save
+
+          
+        
+          
+        
