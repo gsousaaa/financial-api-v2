@@ -19,14 +19,16 @@ app.use(apiRouter)
 app.use(errorMiddleware)
 
 app.listen(envVariables.PORT, async () => {
-    await AppDataSource.initialize()
-        .then((data) => {
-            // here you can start to work with your database
-            console.log("DB working!");
+    console.log(`Server rodando na porta ${envVariables.PORT}`)
+    await AppDataSource
+        .initialize()
+        .then(async () => {
+            console.log('Database connectado com sucesso!');
 
+            return AppDataSource.isInitialized;
         })
-        .catch((error) => console.log("Error: ", error))
-    }
+        .catch((error) => console.log(error));
+}
 )
 
 
