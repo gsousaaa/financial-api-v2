@@ -28,7 +28,7 @@ jobs:
           run: pnpm run build
 
         - name: install pm2
-          run: pnpm install pm2
+          run: npm install pm2
 
         - name: start server
           run: pm2 startOrGracefulReload ecosystem.config.js
