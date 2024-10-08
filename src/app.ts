@@ -1,13 +1,10 @@
 import express from 'express'
-import dotenv from 'dotenv'
 import { AppDataSource } from './database/config'
 import errorMiddleware from './middlewares/errorMiddleware'
 import { authRouter } from './routes/authRoutes'
 import { apiRouter } from './routes/apiRoutes'
 import cors from 'cors'
-import { client } from './database/redis'
-
-dotenv.config()
+import { envVariables } from './env'
 
 const app = express()
 
@@ -21,7 +18,7 @@ app.use(apiRouter)
 
 app.use(errorMiddleware)
 
-app.listen(3003, async () => {
+app.listen(envVariables.PORT, async () => {
     await AppDataSource.initialize()
         .then((data) => {
             // here you can start to work with your database
@@ -29,15 +26,6 @@ app.listen(3003, async () => {
 
         })
         .catch((error) => console.log("Error: ", error))
-
-
-        client.connect().then(() => {
-            console.log('Redis conectado');
-          }).catch(err => {
-            console.error('Erro ao conectar ao Redis:', err);
-          });
-
-        client.flushAll()
     }
 )
 
