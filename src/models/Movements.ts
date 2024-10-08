@@ -18,7 +18,7 @@ export class Movements {
   movementType: string;
 
   @Column("numeric", { name: "value" })
-  value: string;
+  value: number;
 
   @Column("character varying", { name: "description", length: 255 })
   description: string;
@@ -29,6 +29,9 @@ export class Movements {
     default: () => "CURRENT_TIMESTAMP",
   })
   createdAt: Date | null;
+
+  @Column("integer", { name: "user_id" })
+  userId: number;
 
   @ManyToOne(() => Users, (users) => users.movements)
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])

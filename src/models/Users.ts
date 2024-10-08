@@ -35,7 +35,7 @@ export class Users {
   createdAt: Date | null;
 
   @Column("numeric", { name: "balance", nullable: true, default: () => "0" })
-  balance: string | null;
+  balance: number | null;
 
   @OneToMany(() => Movements, (movements) => movements.user)
   movements: Movements[];
