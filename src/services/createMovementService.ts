@@ -11,11 +11,11 @@ export const createMovementService = async (data: ICreateMovement) => {
 
     if(!user) throw new BadRequest('Usuário não encontrado!')
 
-    let balance = user.balance as number
+    let balance = Number(user.balance)
 
     newMovement.movementType === 'revenue' ? balance += newMovement.value : balance -= newMovement.value
 
-    await updateUserBalance(newMovement.userId, balance)
+    await updateUserBalance(newMovement.userId, Number(balance))
 
     return newMovement
 }

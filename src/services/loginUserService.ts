@@ -18,7 +18,7 @@ export const loginUserService = async (credentials: ILoginUser) => {
     return {
         email: hasUser.email,
         username: hasUser.name,
-        balance: hasUser.balance,
+        balance: Number(hasUser.balance),
         token
     }
 }

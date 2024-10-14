@@ -23,7 +23,7 @@ export const updateMovementService = async (data: IUpdateMovement, userId: numbe
     let balance = 0
 
     movements.forEach(movement => {
-        movement.movementType === 'revenue' ? balance += movement.value : balance -= movement.value
+        movement.movementType === 'revenue' ? balance += Number(movement.value) : balance -= Number(movement.value)
     })
 
     await updateUserBalance(userId, balance)

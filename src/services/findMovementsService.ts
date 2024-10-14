@@ -6,5 +6,6 @@ export const findMovementsService = async (userId: number) => {
 
     if (!movements) throw new BadRequest('Não foi possível buscar as movimentações!')
 
-    return movements
+    return movements.map(m => ({ ...m, value: Number(m.value) }))
 }
+

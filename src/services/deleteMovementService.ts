@@ -14,12 +14,14 @@ export const deleteMovementService = async (id: number, userId: number) => {
     if(!user) throw new BadRequest('User não encontrado!')
     let balance = user.balance as number
 
-    movement.movementType === 'revenue' ? balance -= movement.value : balance += movement.value
+    movement.movementType === 'revenue' ? balance -= Number(movement.value) : balance += Number(movement.value)
 
-    await updateUserBalance(user.id as number, balance)
+    await updateUserBalance(user.id as number,  Number(balance))
 
     const deletedMovement = await deleteMovement(movement.id, movement.userId)
 
     return deletedMovement
 }
+
+
 
