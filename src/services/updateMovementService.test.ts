@@ -27,7 +27,7 @@ describe('update movement service', () => {
             movementType: 'revenue',
             description: 'test update movement',
             userId: 2,
-            createdAt: new Date().toISOString()
+            createdAt: new Date()
         })
 
         const updatedMovement = await updateMovementService({

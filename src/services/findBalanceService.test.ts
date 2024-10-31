@@ -1,33 +1,38 @@
-import { AppDataSource } from "@/database/config"
-import { findBalanceService } from "./findBalanceService"
 import BadRequest from "@/errors/BadRequest"
+import { findMovements } from "@/repository/findMovements"
+import { findUser } from "@/repository/findUser"
+import { findBalanceService } from "./findBalanceService"
+
+
+jest.mock("@/repository/findUser")
+jest.mock("@/repository/findMovements")
+
+const mockFindUser = findUser as jest.MockedFunction<typeof findUser>
+
+const mockFindMovements = findMovements as jest.MockedFunction<typeof findMovements>
+
 
 describe('find balance service', () => {
-    beforeAll(async () => {
-        await AppDataSource.initialize()
-        await AppDataSource.synchronize()
+    const id = 1
 
+    beforeEach(() => {
+        jest.clearAllMocks()
     })
 
-    afterAll(async () => {
-        await AppDataSource.destroy()
-    })
 
     it('find balance successfully', async() => {
-        const balance = await findBalanceService(1)
+       mockFindUser.mockResolvedValue({id, balance: 300} as any)
+       mockFindMovements.mockResolvedValue([{movementType: 'revenue', value: 400}, {movementType: 'expense', value: 100},] as any)
+       const result = await findBalanceService(id);
 
-        expect(balance).toHaveProperty('balance')
-        expect(balance).toHaveProperty('expenses')
-        expect(balance).toHaveProperty('revenues')
-    })
+        expect(result).toEqual({
+            balance: 300, 
+            revenues: 400,
+            expenses: 100
+        })
 
-
-    it('find balance fail', async() => {
-        try{
-            await findBalanceService(445)
-        } catch(err) {
-            expect(err).toBeInstanceOf(BadRequest)
-        }
+        expect(findUser).toHaveBeenCalledWith("id", id);
+        expect(findMovements).toHaveBeenCalledWith(id);
     })
 })
 

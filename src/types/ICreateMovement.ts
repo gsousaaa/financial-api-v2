@@ -6,5 +6,5 @@ export interface IPayloadCreateMovement {
 
 export interface ICreateMovement extends IPayloadCreateMovement {
     userId: number
-    createdAt?: string
+    createdAt?: Date
 }

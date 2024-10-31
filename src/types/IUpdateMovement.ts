@@ -1,6 +1,6 @@
 export interface IUpdateMovement {
     id: number,
-    movementType?: 'revenue' | 'expense',
+    movementType?: string,
     value?: number,
     description?: string
 }

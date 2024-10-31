@@ -1,43 +1,69 @@
-import { AppDataSource } from "@/database/config"
-import { createMovement } from "@/repository/createMovement"
-import { deleteMovementService } from "./deleteMovementService"
+import { deleteMovementService } from "@/services/deleteMovementService"
+import { deleteMovement } from "@/repository/deleteMovement"
+import { findMovementById } from "@/repository/findMovementById"
+import { findUser } from "@/repository/findUser"
+import { updateUserBalance } from "@/repository/updateUserBalance"
 import BadRequest from "@/errors/BadRequest"
 
+// Mock das funções de repositório
+jest.mock("@/repository/deleteMovement")
+jest.mock("@/repository/findMovementById")
+jest.mock("@/repository/findUser")
+jest.mock("@/repository/updateUserBalance")
+
+const mockFindMovementById = findMovementById as jest.MockedFunction<typeof findMovementById>
+const mockFindUser = findUser as jest.MockedFunction<typeof findUser>
+const mockUpdateUserBalance = updateUserBalance as jest.MockedFunction<typeof updateUserBalance>
+const mockDeleteMovement = deleteMovement as jest.MockedFunction<typeof deleteMovement>
+
 describe('delete movement service', () => {
-    beforeAll(async () => {
-        await AppDataSource.initialize()
-        await AppDataSource.synchronize()
+    const movementId = 1
+    const userId = 123
 
+    beforeEach(() => {
+        jest.clearAllMocks()
     })
 
-    afterAll(async () => {
-        await AppDataSource.destroy()
-    })
-
-
-    it('delete movement successfully', async () => {
-        const newMovement = await createMovement({
+    it('should delete a movement successfully', async () => {
+        // Mocka os dados de movimento e usuário
+        mockFindMovementById.mockResolvedValue({
+            id: movementId,
+            userId: userId,
             value: 100,
-            movementType: 'revenue',
-            description: 'test delete movement',
-            userId: 1
-        })
+            movementType: 'revenue'
+        } as any)
+        
+        mockFindUser.mockResolvedValue({
+            id: userId,
+            balance: 200
+        } as any)
 
-        const deletedMovement = await deleteMovementService(newMovement.id, newMovement.userId)
+        mockDeleteMovement.mockResolvedValue({ id: movementId, userId: userId } as any)
 
-        expect(deletedMovement).toHaveProperty('raw')
-        expect(deletedMovement).toHaveProperty('affected')
+        const result = await deleteMovementService(movementId, userId)
 
-        expect(deletedMovement.affected).toBe(1)
+        expect(result).toEqual(expect.objectContaining({
+            id: movementId,
+            userId: userId
+        }))
 
+        expect(findMovementById).toHaveBeenCalledWith(movementId, userId)
+        expect(findUser).toHaveBeenCalledWith("id", userId)
+        expect(updateUserBalance).toHaveBeenCalledWith(userId, 100) // 200 - 100
+        expect(deleteMovement).toHaveBeenCalledWith(movementId, userId)
     })
 
-    it('delete movement fail', async() => {
-        try {
-            await deleteMovementService(445, 445)
-        } catch(err: any) {
-            expect(err).toBeInstanceOf(BadRequest)
-            expect(err.message).toBe('Movimentação não encontrada!')
-        }
+    it('should throw BadRequest if movement not found', async () => {
+        mockFindMovementById.mockResolvedValue(null)
+
+        await expect(deleteMovementService(movementId, userId))
+            .rejects
+            .toThrow(BadRequest)
+
+        expect(findMovementById).toHaveBeenCalledWith(movementId, userId)
+        expect(findUser).not.toHaveBeenCalled()
+        expect(updateUserBalance).not.toHaveBeenCalled()
+        expect(deleteMovement).not.toHaveBeenCalled()
     })
+
 })

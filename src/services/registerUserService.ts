@@ -12,7 +12,7 @@ export const registerUserService = async (data: IRegisterUser) => {
 
     const password = hashPassword(data.password)
 
-    const infoUser = await createUser({ ...data, password, createdAt: new Date().toISOString() })
+    const infoUser = await createUser({ ...data, password, createdAt: new Date() })
 
     const token = tokenManager.createToken({ info: { id: infoUser.id, name: infoUser.name as string, email: infoUser.email, balance: infoUser.balance as number} }, '2h')
 

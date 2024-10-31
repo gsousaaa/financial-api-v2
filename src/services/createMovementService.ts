@@ -5,7 +5,7 @@ import { updateUserBalance } from "@/repository/updateUserBalance"
 import { ICreateMovement } from "@/types/ICreateMovement"
 
 export const createMovementService = async (data: ICreateMovement) => {
-    const newMovement = await createMovement({...data, createdAt: new Date().toISOString()})
+    const newMovement = await createMovement({...data, createdAt: new Date()})
 
     const user = await findUser('id', newMovement.userId)
 

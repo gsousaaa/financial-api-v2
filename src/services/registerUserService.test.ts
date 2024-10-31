@@ -1,45 +1,60 @@
-import BadRequest from "@/errors/BadRequest"
 import { registerUserService } from "./registerUserService"
-import { AppDataSource } from "@/database/config"
-import { Users } from "@/models/Users"
+import BadRequest from "@/errors/BadRequest"
+import { createUser } from "@/repository/createUser"
+import { findUser } from "@/repository/findUser"
+import { hashPassword } from "@/utils/hashPassword"
+import { tokenManager } from "@/utils/TokenManager"
 
+jest.mock('@/repository/createUser')
+jest.mock('@/repository/findUser')
+jest.mock('@/utils/TokenManager')
+jest.mock('@/utils/hashPassword')
+
+const mockFindUser = findUser as jest.MockedFunction<typeof findUser>
+const mockTokenManager = tokenManager as jest.Mocked<typeof tokenManager>
+const mockCreateUser = createUser as jest.MockedFunction<typeof createUser>
+const mockHashPassword = hashPassword as jest.MockedFunction<typeof hashPassword>
 
 describe('Register user service', () => {
-    beforeAll(async () => {
-        await AppDataSource.initialize()
-        await AppDataSource.synchronize()
-    })
+    const credentials = { id: 1, email: 'test@gmail.com', password: '1234', name: 'test' }
+    const token = 'mockToken'
 
-    afterAll(async () => {
-        await AppDataSource.destroy()
+    beforeEach(() => {
+        jest.clearAllMocks()
     })
-
-    afterEach(async () => {
-        const userRepository = AppDataSource.getRepository(Users)
-        await userRepository.delete({ email })
-    })
-
-    const email = 'test@etest.com'
-    const password = '1234'
-    const name = 'test user'
 
     it('create a new user', async () => {
-        const user = await registerUserService({ email, password, name })
-        expect(user).not.toBeInstanceOf(BadRequest)
+        mockFindUser.mockResolvedValue(null)
+        mockHashPassword.mockReturnValue('hashedPassword')
+        mockCreateUser.mockResolvedValue({ ...credentials, password: 'hashedPassword' } as any)
+        mockTokenManager.createToken.mockReturnValue(token)
 
-        expect(user.infoUser).toHaveProperty('id');
-        expect(user.infoUser.email).toBe(email)
+        const result = await registerUserService(credentials)
 
-        expect(user).toHaveProperty('token')
+        expect(mockCreateUser).toHaveBeenCalledWith({ ...credentials, password: 'hashedPassword', createdAt: expect.any(Date) })
 
+        expect(result).toEqual({
+            infoUser: {
+                id: 1,
+                email: credentials.email,
+                name: credentials.name,
+                password: 'hashedPassword'
+            }, token
+           
+        })
+
+        expect(mockTokenManager.createToken).toHaveBeenCalledWith(
+            { info: { id: 1, name: credentials.name, email: credentials.email } },
+            '2h'
+        )
     })
 
     it('not allow create a new user with existing email', async () => {
-        try {
-            await registerUserService({ email: 'user@jest.com', password: '1234', name: 'test' })
-        } catch (err: any) {
-            expect(err).toBeInstanceOf(BadRequest)
-            expect(err.message).toBe('E-mail ja cadastrado')
-        }
-    })
+        mockFindUser.mockResolvedValue({ id: 1, email: 'test@gmail.com', name: 'test' } as any);
+    
+        await expect(registerUserService(credentials)).rejects.toThrow(BadRequest);
+        
+        expect(mockCreateUser).not.toHaveBeenCalled();
+    });
 })
+

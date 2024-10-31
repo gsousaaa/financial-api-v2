@@ -1,7 +1,6 @@
 import { AppDataSource } from "@/database/config"
 import { Movements } from "@/models/Movements"
 
-
 export const deleteMovement = async(id: number, userId: number) => {
     const movementModel = AppDataSource.getRepository(Movements)
 

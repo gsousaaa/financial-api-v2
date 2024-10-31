@@ -1,49 +1,68 @@
-import { AppDataSource } from "@/database/config"
-import { loginUserService } from "./loginUserService"
 import BadRequest from "@/errors/BadRequest"
+import { loginUserService } from "@/services/loginUserService"
+import { findUser } from "@/repository/findUser"
+import { comparePassword } from "@/utils/comparePassword"
+import { tokenManager } from "@/utils/TokenManager"
+import { hashPassword } from "@/utils/hashPassword"
+
+// Mock das funções utilizadas no serviço
+jest.mock("@/repository/findUser")
+jest.mock("@/utils/comparePassword")
+jest.mock("@/utils/TokenManager")
+
+const mockFindUser = findUser as jest.MockedFunction<typeof findUser>
+const mockComparePassword = comparePassword as jest.MockedFunction<typeof comparePassword>
+const mockTokenManager = tokenManager as jest.Mocked<typeof tokenManager>
+
 
 describe('login user service', () => {
-    beforeAll(async () => {
-        await AppDataSource.initialize()
-        await AppDataSource.synchronize()
+    const credentials = { email: 'test@gmail.com', password: '1234' }
+    const user = { id: 1, name: 'teste', email: credentials.email, password: 'hashedPassword', balance: 0 }
+    const token = 'mockToken'
+
+    beforeEach(() => {
+        jest.clearAllMocks()
     })
 
-    afterAll(async () => {
-        await AppDataSource.destroy()
+
+    it('login successfully', async () => {
+        mockFindUser.mockResolvedValue(user as any)
+        mockComparePassword.mockResolvedValue(true)
+        mockTokenManager.createToken.mockReturnValue(token)
+
+        const result = await loginUserService(credentials)
+
+        expect(result).toEqual({
+            email: user.email,
+            username: user.name,
+            balance: user.balance,
+            token
+        })
+
+        expect(mockFindUser).toHaveBeenCalledWith('email', credentials.email)
+        expect(mockComparePassword).toHaveBeenCalledWith(credentials.password, user.password)
     })
 
-    const email = 'user@jest.com'
-    const password = '1234'
+    it('login fail: invalid email', async () => {
+        mockFindUser.mockResolvedValue(null)
 
-    it('login successfully', async() => {
-        const token = await loginUserService({email, password})
+        await expect(loginUserService(credentials)).rejects.toThrow(BadRequest)
+        await expect(loginUserService(credentials)).rejects.toThrow('Login e/ou senha incorretos')
 
-        expect(token).not.toBeInstanceOf(BadRequest)
-        expect(token).toBeTruthy()
-        expect(typeof token).toBe('string')
-       
+        expect(mockFindUser).toHaveBeenCalledWith('email', credentials.email)
+        expect(mockComparePassword).not.toHaveBeenCalled()
+        expect(mockTokenManager.createToken).not.toHaveBeenCalled()
     })
 
-    it('login fail: invalid email', async() => {
-        try{
-            const token = await loginUserService({email: 'invalidemail@jest.com', password})
-            expect(token).toBeFalsy()
-            expect(typeof token).not.toBe('string')
-        } catch(err: any){
-            expect(err).toBeInstanceOf(BadRequest)
-            expect(err.message).toBe('Login e/ou senha incorretos')
-        }
-    }) 
+    it('login fail: invalid password', async () => {
+        mockFindUser.mockResolvedValue(user as any)
+        mockComparePassword.mockResolvedValue(false)
 
-    it('login fail: invalid password', async() => {
-        try{
-            const token = await loginUserService({email, password: 'aaaaaa1'})
-            expect(token).toBeFalsy()
-            expect(typeof token).not.toBe('string')
-        } catch(err: any){
-            expect(err).toBeInstanceOf(BadRequest)
-            expect(err.message).toBe('Login e/ou senha incorretos')
-        }
-    }) 
+        await expect(loginUserService(credentials)).rejects.toThrow(BadRequest)
+        await expect(loginUserService(credentials)).rejects.toThrow('Login e/ou senha incorretos')
 
+        expect(mockFindUser).toHaveBeenCalledWith('email', credentials.email)
+        expect(mockComparePassword).toHaveBeenCalledWith(credentials.password, user.password)
+        expect(mockTokenManager.createToken).not.toHaveBeenCalled()
+    })
 })

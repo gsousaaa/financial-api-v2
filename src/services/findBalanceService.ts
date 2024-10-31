@@ -1,7 +1,7 @@
 import BadRequest from "@/errors/BadRequest"
 import { findMovements } from "@/repository/findMovements"
 import { findUser } from "@/repository/findUser"
-import { updateUserBalance } from "@/repository/updateUserBalance"
+
 
 export const findBalanceService = async (id: number) => {
     const movements = await findMovements(id)

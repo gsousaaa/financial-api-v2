@@ -5,7 +5,7 @@ import dotenv from "dotenv"
 dotenv.config();
 
 const envSchema = z.object({
-    NODE_ENV: z.enum(['dev', 'prod']),
+    NODE_ENV: z.enum(['dev', 'test', 'prod']),
     PORT: z.coerce.number().default(3003),
     JWT_SECRET_KEY: z.string(),
     PG_HOST: z.string(),

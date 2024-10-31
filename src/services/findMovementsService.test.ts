@@ -1,31 +1,21 @@
-import { AppDataSource } from "@/database/config"
-import { findMovementsService } from "./findMovementsService"
-import BadRequest from "@/errors/BadRequest"
+import { findMovementsService } from './findMovementsService'
+import { findMovements } from '@/repository/findMovements'
+import BadRequest from '@/errors/BadRequest'
+
+jest.mock('@/repository/findMovements')
+
+const mockFindMovements = findMovements as jest.MockedFunction<typeof findMovements>
 
 describe('find movements service', () => {
-    beforeAll(async () => {
-        await AppDataSource.initialize()
-        await AppDataSource.synchronize()
+    const id = 1
+
+    it('find movements successfuly', async () => {
+        mockFindMovements.mockResolvedValue([{ movementType: 'revenue', value: 500 }, { movementType: 'expense', value: 300 }, { movementType: 'revenue', value: 100 }] as any)
+
+        const movements = await findMovementsService(id)
+        console.log(movements)
+        expect(movements).toEqual([{ movementType: 'revenue', value: 500 }, { movementType: 'expense', value: 300 }, { movementType: 'revenue', value: 100 }])
+
+        expect(findMovements).toHaveBeenCalledWith(id);
     })
-
-    afterAll(async () => {
-        await AppDataSource.destroy()
-    })
-
-    it('find movements successfuly', async() => {
-        const movements = await findMovementsService(1)
-
-        expect(movements.length).toBeGreaterThanOrEqual(0)
-
-    })
-
-
-    it('find movements fail', async() => {
-        try {
-            await findMovementsService(445)
-        } catch(err) {
-            expect(err).toBeInstanceOf(BadRequest)
-        }
-    })
-
 })

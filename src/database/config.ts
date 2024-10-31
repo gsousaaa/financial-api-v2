@@ -16,7 +16,6 @@ interface IDConfig {
 
 interface IConfig {
     dev: IDConfig;
-    test: IDConfig;
     prod: IDConfig;
 }
 
@@ -27,14 +26,6 @@ const config: IConfig = {
         database: envVariables.PG_DB!,
         host: envVariables.PG_HOST!,
         port:envVariables.PG_PORT!,
-    },
-
-    test: {
-        username: process.env.PG_USER_TEST!,
-        password: process.env.PG_PASSWORD_TEST!,
-        database: process.env.PG_DB_TEST!,
-        host: process.env.PG_HOST_TEST!,
-        port: parseInt(process.env.PG_PORT_TEST!),
     },
     prod: {
         username: envVariables.PG_USER!,
